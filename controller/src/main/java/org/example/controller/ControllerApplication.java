@@ -14,6 +14,8 @@ public class ControllerApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext run = SpringApplication.run(ControllerApplication.class, args);
+        System.out.println("hello");
+        System.out.println();
 
     }
 

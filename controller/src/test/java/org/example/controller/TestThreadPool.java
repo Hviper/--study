@@ -3,13 +3,27 @@ package org.example.controller;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.*;
-import java.util.function.Supplier;
 
 public class TestThreadPool {
+    @Test
+    public void test8() throws InterruptedException {
+        CountDownLatch doneSignal = new CountDownLatch(2);
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        scheduledExecutorService.schedule(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("ignore");
+                doneSignal.countDown();
+            }
+        }, 1, TimeUnit.SECONDS);
+        System.out.println("begin");
+        doneSignal.countDown();
+        doneSignal.await();
+    }
 
     @Test
     public void test7() throws InterruptedException {
-        CompletableFuture.runAsync(()->{
+        CompletableFuture.runAsync(() -> {
             System.out.println("hello");
         });
         Thread.sleep(1000);
@@ -19,7 +33,7 @@ public class TestThreadPool {
     }
 
     @Test
-    public void test6(){
+    public void test6() {
         CompletableFuture<String> f1 = CompletableFuture.supplyAsync(() -> {
             System.out.println("异步任务执行");
             return "success";
@@ -64,7 +78,7 @@ public class TestThreadPool {
 
     @Test
     public void testThreadPool() throws ExecutionException, InterruptedException {
-        FutureTask<String> task = new FutureTask<>(()-> "result");
+        FutureTask<String> task = new FutureTask<>(() -> "result");
         ExecutorService executorService = Executors.newCachedThreadPool();
         executorService.execute(task);
         Future<?> submit = executorService.submit(task);
@@ -133,13 +147,16 @@ public class TestThreadPool {
         ForkJoinTask<Long> submit = forkJoinPool.submit(task);
         System.out.println(submit.get());
     }
+
     class CountTask extends RecursiveTask<Long> {
         Long maxCountRange = 100000000l;//最大计算范围
         Long startNum, endNum;
-        public CountTask(long startNum, long endNum){
+
+        public CountTask(long startNum, long endNum) {
             this.startNum = startNum;
             this.endNum = endNum;
         }
+
         @Override
         protected Long compute() {
             long range = endNum - startNum;

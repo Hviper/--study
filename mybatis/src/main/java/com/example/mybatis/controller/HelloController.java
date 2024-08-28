@@ -19,8 +19,11 @@ public class HelloController {
     @PostMapping("post")
     public User post(HttpServletResponse response , HttpServletRequest request, User user) {
         System.out.println(request);
+        System.out.println(user);
         System.out.println(request.getRequestURI());
         System.out.println(response);
+        String fileUrl = "/Users/aidis/Documents/小论文/英文/X-ray射线缺陷检测论文/2023-Generalized weld bead region of interest localization and improved faster.pdf";
+        String app = "/Users/aidis/Documents/小论文/英文/X-ray射线缺陷检测论文/2024-Ensemble-based deep learning model for welding defect detection.pdf";
         return user;
     }
 }

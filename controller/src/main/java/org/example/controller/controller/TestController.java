@@ -2,7 +2,6 @@ package org.example.controller.controller;
 
 import org.example.controller.annotation.InterceptorAnnotation;
 import org.example.controller.annotation.Log;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,4 +33,5 @@ public class TestController {
 
         return "search_results";
     }
+
 }
