@@ -1,0 +1,81 @@
+package com.hmi1024.flink.example;
+
+import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.datastream.KeyedStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.util.Collector;
+
+/**
+ * 使用流的方式进行单词统计
+ * 读取socket里面的数据，对单词进行空格拆分，对每个单词进行计算，然后进行分组（分流）累加
+ *
+ * 流作业与批作业的区别：
+ * 1：批作业需要数据事先存在，流作业数据事先可以不存在
+ * 2：批作业数据是有界的，流作业的数据是无界
+ * 3：批处理作业运行完成作业停止，流作业不会主动停止
+ */
+public class StreamWordCount {
+    public static void main(String[] args) throws Exception {
+        /**
+         * 实现步骤：
+         * 1）初始化flink流处理的运行环境
+         * 2）指定socket数据源，获取数据
+         * 3）对获取到的数据进行空格拆分
+         * 4）对拆分的单词进行计数，每个单词记一次数
+         * 5）对相同的单词进行分组操作
+         * 6）对分组后的数据进行累加操作
+         * 7）打印输出（测试）
+         * 8）启动作业，递交任务
+         */
+        //初始化flink流处理的运行环境
+        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+		//设置并行度
+        env.setParallelism(2);
+
+        //指定socket数据源，获取数据
+        final DataStreamSource<String> socketTextStream = env.socketTextStream("node1", 9999);
+
+        //对获取到的数据进行空格拆分
+        final SingleOutputStreamOperator<String> words = socketTextStream.flatMap(
+                new FlatMapFunction<String, String>() {
+            @Override
+            public void flatMap(String line, Collector<String> out) throws Exception {
+                //将每行字符串进行空格拆分
+                final String[] dataArray = line.split(" ");
+                //循环遍历字符串数组
+                for (String word : dataArray) {
+                    //需要使用out进行返回数据
+                    out.collect(word);
+                }
+            }
+        });
+
+        //对拆分的单词进行计数，每个单词记一次数
+        final SingleOutputStreamOperator<Tuple2<String, Integer>> wordAndOne = words.map(
+                new MapFunction<String, Tuple2<String, Integer>>() {
+            @Override
+            public Tuple2<String, Integer> map(String value) throws Exception {
+                return Tuple2.of(value, 1);
+            }
+        });
+
+        //对相同的单词进行分组操作
+        final KeyedStream<Tuple2<String, Integer>, Tuple> keyedStream = wordAndOne.keyBy(0);
+
+        //对分组后的数据进行累加操作
+        final SingleOutputStreamOperator<Tuple2<String, Integer>> summed = keyedStream.sum(1);
+
+        //打印输出（测试）
+        summed.print();
+
+        //启动作业，递交任务
+        env.execute();
+    }
+}
+

@@ -1,0 +1,13 @@
+spring:
+  elasticsearch:
+    uris: localhost:9200
+    socket-timeout: 30s
+    connection-timeout: 5s
+  datasource:
+    url: jdbc:mysql://localhost:3306/flink-es?useSSL=false&serverTimezone=GMT%2B8&characterEncoding=UTF-8
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+logging:
+  level:
+    sql: debug

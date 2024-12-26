@@ -1,0 +1,17 @@
+#spring:
+#  kafka:
+#    consumer:
+#      group-id: my-consumer-group
+#      auto-offset-reset: earliest
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#    bootstrap-servers: localhost:9093
+retry:
+  enabled: true  # 开启重试
+  maxAttempts: 5 # 最大重试次数
+  initialInterval: 1000 # 初始重试间隔（单位：毫秒）
+  multiplier: 2.0 # 重试间隔的倍数
+  maxInterval: 5000 # 最大重试间隔（单位：毫秒）
+  exceptions:
+    - java.net.SocketTimeoutException # 需要重试的异常类型

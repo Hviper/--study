@@ -13,7 +13,7 @@ public class MainTest {
         // 设置 Flink 执行环境
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        DataStreamSource<String> stringDataStreamSource = env.readTextFile("input/read.txt");
+        DataStreamSource<String> stringDataStreamSource = env.readTextFile("data.txt");
         SingleOutputStreamOperator<Tuple2<String, Integer>> tuple = stringDataStreamSource.flatMap(new FlatMapFunction<String, Tuple2<String, Integer>>() {
             @Override
             public void flatMap(String s, Collector<Tuple2<String, Integer>> collector) throws Exception {

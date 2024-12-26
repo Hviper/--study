@@ -14,11 +14,10 @@
 		<module>spring-security</module>
 		<module>mybatis</module>
 		<module>mybatisPlus</module>
-	</modules>
+        <module>flink-task</module>
+    </modules>
 
-	<properties>
-		<java.version>17</java.version>
-	</properties>
+
 
 	<dependencyManagement>
 		<dependencies>

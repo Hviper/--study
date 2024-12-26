@@ -4,7 +4,23 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.*;
 
+class teacher{
+
+}
+
+class child extends teacher {
+
+}
+
 public class TestThreadPool {
+
+    @Test
+    public void test9(){
+        child c = new child();
+        teacher t = c;
+        System.out.println(t);
+    }
+
     @Test
     public void test8() throws InterruptedException {
         CountDownLatch doneSignal = new CountDownLatch(2);
